@@ -68,6 +68,7 @@ select {
 .top-actions {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .button {
@@ -122,6 +123,27 @@ select {
 
 .content {
   padding: 22px 30px;
+}
+
+.sync-banner {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: #eef3ff;
+  color: #3559bc;
+  font-size: 12px;
+}
+
+.sync-banner.error {
+  background: #fff0f2;
+  color: var(--red);
+}
+
+.sync-banner.success {
+  background: #eaf7f0;
+  color: var(--green);
 }
 
 .control-box {
@@ -181,6 +203,12 @@ select {
   background: #fff;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+  background: #f1f3f6;
 }
 
 .work-ledger-box {
@@ -261,6 +289,19 @@ thead th {
   text-align: center;
 }
 
+.date-list {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.date-badge {
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: #f1f3f6;
+  font-size: 10px;
+}
+
 .col-task {
   width: 400px;
   min-width: 400px;
@@ -278,6 +319,24 @@ thead th {
   background: #fff;
 }
 
+.info-head {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 8;
+}
+
+.ledger-head-fields .fixed {
+  z-index: 7;
+}
+
+.ledger-head-months th {
+  top: 0;
+}
+
+.ledger-head-fields th {
+  top: 34px;
+}
+
 .col-status.fixed {
   box-shadow: 5px 0 8px #20212410;
 }
@@ -292,6 +351,12 @@ thead th {
   width: 70px;
   min-width: 70px;
   max-width: 70px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.total-cell {
+  background: #fafafa;
 }
 
 .day.weekend,
@@ -388,12 +453,6 @@ thead th {
   background: #fff;
 }
 
-.total-cell {
-  font-weight: 800;
-  background: #fafafa;
-  text-align: center;
-}
-
 tfoot th,
 tfoot td {
   height: 38px;
@@ -473,7 +532,7 @@ tfoot td {
   padding: 20px 22px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 20px;
 }
 
 .form-field {
@@ -495,12 +554,159 @@ tfoot td {
   border-radius: 8px;
 }
 
+.date-entry {
+  display: flex;
+  gap: 8px;
+}
+
+.date-entry input {
+  flex: 1;
+}
+
+.date-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-height: 28px;
+}
+
+.date-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #f1f3f6;
+}
+
+.date-chip button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
 .dialog-actions {
   padding: 15px 22px;
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+}
+
+.leave-dialog {
+  width: min(760px, calc(100% - 30px));
+}
+
+.leave-management-body {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(300px, 1.1fr);
+}
+
+.leave-form-box {
+  padding: 20px 22px;
+  display: grid;
+  gap: 20px;
+  border-left: 1px solid var(--line);
+}
+
+.leave-list-box {
+  min-width: 0;
+  padding: 20px 22px;
+}
+
+.leave-type-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.leave-list-box > strong {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 13px;
+}
+
+.leave-list {
+  display: grid;
+  gap: 6px;
+  min-height: 300px;
+  max-height: 420px;
+  align-content: start;
+  overflow-y: auto;
+}
+
+.leave-list-item {
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink);
+  font-weight: 700;
+  text-align: left;
+}
+
+.leave-list-item:hover,
+.leave-list-item.active {
+  border-color: var(--pink);
+  box-shadow: inset 0 0 0 1px var(--pink);
+}
+
+.leave-list-empty {
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.leave-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.leave-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 40px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.leave-check input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--pink);
+}
+
+.day.leave-annual,
+.leave-list-item.leave-annual,
+.hour-input.leave-annual {
+  background: #e8f1ff;
+}
+
+.day.leave-half,
+.leave-list-item.leave-half,
+.hour-input.leave-half {
+  background: #e8f8ee;
+}
+
+.day.leave-quarter,
+.leave-list-item.leave-quarter,
+.hour-input.leave-quarter {
+  background: #fff5d9;
 }
 
 @media (max-width: 900px) {
@@ -526,6 +732,20 @@ tfoot td {
 }
 
 @media (max-width: 600px) {
+  .leave-list {
+    min-height: 180px;
+    max-height: 280px;
+  }
+
+  .leave-management-body {
+    grid-template-columns: 1fr;
+  }
+
+  .leave-form-box {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
   .topbar {
     height: auto;
     padding: 15px;
@@ -576,123 +796,4 @@ tfoot td {
   .form-field.full {
     grid-column: auto;
   }
-}
-
-.nav-title,
-.nav-item:not(.active) {
-  display: none;
-}
-
-.sidebar-foot {
-  margin-top: auto;
-}
-
-.sync-banner {
-  display: flex;
-  align-items: center;
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  background: #eef3ff;
-  color: #3559bc;
-  font-size: 12px;
-}
-
-.sync-banner.error {
-  background: #fff0f2;
-  color: var(--red);
-}
-
-.sync-banner.success {
-  background: #eaf7f0;
-  color: var(--green);
-}
-
-table {
-  min-width: 900px;
-}
-
-.col-date {
-  width: 50px;
-  min-width: 50px;
-}
-
-.date-list {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-}
-
-.date-badge {
-  padding: 3px 6px;
-  border-radius: 999px;
-  background: #f1f3f6;
-  font-size: 10px;
-}
-
-.date-entry {
-  display: flex;
-  gap: 8px;
-}
-
-.date-entry input {
-  flex: 1;
-}
-
-.date-chips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  min-height: 28px;
-}
-
-.date-chip {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: #f1f3f6;
-  border-radius: 999px;
-  padding: 5px 8px;
-}
-
-.date-chip button {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 0;
-}
-
-@media (max-width: 600px) {
-  .form-field.full {
-    grid-column: auto;
-  }
-}
-
-.fixed {
-  position: sticky;
-}
-
-.info-head {
-  position: sticky;
-  inset-inline-start: 0;
-  z-index: 8;
-}
-
-.ledger-head-fields .fixed {
-  z-index: 7;
-}
-
-.ledger-head-months th {
-  top: 0;
-}
-
-.ledger-head-fields th {
-  top: 34px;
-}
-
-.icon-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.35;
-  background: #f1f3f6;
 }
