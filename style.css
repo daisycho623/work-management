@@ -25,6 +25,10 @@ body {
   margin: 0;
 }
 
+button {
+  cursor: pointer;
+}
+
 button,
 input,
 select {
@@ -92,6 +96,28 @@ select {
 
 .button.danger:hover {
   background: #ffe8eb;
+}
+
+.button.active {
+  border-color: var(--pink);
+  color: var(--pink);
+  background: #fff3f9;
+}
+
+.reorder-mode tr[data-row-id] {
+  cursor: grab;
+}
+
+.reorder-mode tr[data-row-id]:active {
+  cursor: grabbing;
+}
+
+.reorder-mode tr.dragging {
+  opacity: 0.45;
+}
+
+.reorder-mode tr.drag-over td {
+  border-top: 2px solid var(--pink);
 }
 
 .content {
