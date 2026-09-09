@@ -42,7 +42,7 @@
               <option>대기</option>
               <option>완료</option>
             </select>
-            <input class="field search" id="search" type="search" placeholder="RMS 또는 업무명 검색">
+            <input class="field search" id="search" type="search" placeholder="RMS, Jira 또는 업무명 검색">
           </div>
           <div class="month-control">
             <button class="icon-button" id="prevMonth">‹</button>
@@ -75,7 +75,14 @@
       </div>
       <div class="form-box">
         <label class="form-field">
-          <span>RMS</span><input name="rms" inputmode="numeric" placeholder="예: 87036">
+          <span>구분</span>
+          <select name="category">
+            <option selected>플러스탭</option>
+            <option>전사 운영</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>RMS, Jira</span><input name="rms" placeholder="예: 00000 또는 DCBGIT-00000">
         </label>
         <div class="form-field">
           <span>반영일</span>
@@ -84,7 +91,7 @@
             <button class="button" id="addDate" type="button">추가</button>
           </div>
         </div>
-        <div class="form-field full">
+        <div class="form-field">
           <span>선택한 반영일</span>
           <div class="date-chips" id="dateChips"></div>
         </div>
@@ -92,7 +99,7 @@
           <span>업무명</span>
           <input name="task" required placeholder="업무명을 입력하세요">
         </label>
-        <label class="form-field">
+        <label class="form-field full">
           <span>진행현황</span>
           <select name="status">
             <option selected>예정</option>
@@ -101,13 +108,6 @@
             <option>검수</option>
             <option>대기</option>
             <option>완료</option>
-          </select>
-        </label>
-        <label class="form-field">
-          <span>구분</span>
-          <select name="category">
-            <option>전사 운영</option>
-            <option selected>플러스탭</option>
           </select>
         </label>
       </div>
