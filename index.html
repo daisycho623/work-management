@@ -28,7 +28,11 @@
         <div class="sync-banner" id="syncBanner">서버 데이터를 불러오는 중입니다.</div>
         <section class="control-box">
           <div class="filters">
-            <input class="field search" id="search" type="search" placeholder="RMS 또는 업무명 검색">
+            <select class="field" id="categoryFilter">
+              <option value="">전체 구분</option>
+              <option>플러스탭</option>
+              <option>전사 운영</option>
+            </select>
             <select class="field" id="statusFilter">
               <option value="">전체 진행현황</option>
               <option>예정</option>
@@ -38,13 +42,7 @@
               <option>대기</option>
               <option>완료</option>
             </select>
-            <select class="field" id="categoryFilter">
-              <option value="">전체 구분</option>
-              <option>공통</option>
-              <option>메인</option>
-              <option>플러스탭</option>
-              <option>닷컴개발요청SR</option>
-            </select>
+            <input class="field search" id="search" type="search" placeholder="RMS 또는 업무명 검색">
           </div>
           <div class="month-control">
             <button class="icon-button" id="prevMonth">‹</button>
@@ -97,21 +95,19 @@
         <label class="form-field">
           <span>진행현황</span>
           <select name="status">
-            <option>예정</option>
-            <option>대기</option>
-            <option selected>진행</option>
-            <option>검수</option>
-            <option>완료</option>
+            <option selected>예정</option>
             <option>보류</option>
+            <option>진행</option>
+            <option>검수</option>
+            <option>대기</option>
+            <option>완료</option>
           </select>
         </label>
         <label class="form-field">
           <span>구분</span>
           <select name="category">
-            <option>공통</option>
-            <option>메인</option>
-            <option>플러스탭</option>
-            <option>닷컴개발요청SR</option>
+            <option>전사 운영</option>
+            <option selected>플러스탭</option>
           </select>
         </label>
       </div>
