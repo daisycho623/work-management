@@ -1,15 +1,5 @@
 const API_URL=window.WORK_LEDGER_CONFIG?.apiUrl?.trim()||'';
 const STATUS_OPTIONS=['예정','대기','진행','검수','완료','보류'];
-const seed=[
-{id:'1',rms:'87036',dates:['2026-09-15'],task:'[DCBGIT-44424] [개인화] 추천 영역 UI 개선 및 운영 반영',status:'완료',category:'플러스탭',hours:{'2026-09-02':1,'2026-09-03':2,'2026-09-04':1.5,'2026-09-07':2,'2026-09-08':3,'2026-09-14':.75}},
-{id:'2',rms:'86944',dates:['2026-09-11'],task:'[메인][플러스탭] 9월 콘텐츠 썸네일 및 상세 페이지 교체',status:'완료',category:'메인',hours:{'2026-09-01':2,'2026-09-02':3,'2026-09-09':1,'2026-09-10':2}},
-{id:'3',rms:'87081',dates:['2026-09-18'],task:'[DCBGIT-44510] 고객지원 페이지 접근성 개선 요청',status:'진행',category:'공통',hours:{'2026-09-08':1,'2026-09-09':2,'2026-09-10':3,'2026-09-11':2,'2026-09-14':3}},
-{id:'4',rms:'87103',dates:['2026-09-22'],task:'[닷컴개발요청SR] 모바일 요금제 랜딩 수정 및 QA',status:'검수',category:'닷컴개발요청SR',hours:{'2026-09-14':2,'2026-09-15':3,'2026-09-16':3,'2026-09-17':1}},
-{id:'5',rms:'',dates:['2026-09-25'],task:'[플러스탭] Simple. Lab 9월 월간 리포트 제작',status:'진행',category:'플러스탭',hours:{'2026-09-17':2,'2026-09-18':4,'2026-09-21':3}},
-{id:'6',rms:'87145',dates:['2026-09-29'],task:'[공통] GNB 검색 인터랙션 수정',status:'예정',category:'공통',hours:{}},
-{id:'7',rms:'86872',dates:['2026-09-04'],task:'[메인] 프로모션 KV 배너 반응형 오류 수정',status:'완료',category:'메인',hours:{'2026-09-01':1,'2026-09-02':2,'2026-09-03':2}},
-{id:'8',rms:'87098',dates:['2026-09-24'],task:'[플러스탭] 생일 파티 이벤트 종료 콘텐츠 교체',status:'보류',category:'플러스탭',hours:{'2026-09-11':1,'2026-09-14':2}}
-];
 const MIN_MONTH=new Date(2026,0,1);
 let current=new Date(new Date().getFullYear(),new Date().getMonth(),1),tasks=[],selectedDates=[],draggedId=null,saveTimer=null;
 const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0'),dateKey=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
@@ -17,7 +7,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 function showSync(message,type=''){const box=$('#syncBanner');box.className=`sync-banner ${type}`;box.textContent=message}
 function normalizeTask(t){const dates=Array.isArray(t.dates)?t.dates:(t.date?[t.date]:[]);return {...t,id:String(t.id),dates:[...new Set(dates.filter(Boolean))].sort(),hours:t.hours||{}}}
 async function api(action,payload={}){if(!API_URL)throw new Error('config.js에 Apps Script 웹 앱 URL을 설정해 주세요.');const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...payload})});if(!response.ok)throw new Error(`서버 응답 오류 (${response.status})`);const data=await response.json();if(!data.ok)throw new Error(data.error||'요청에 실패했습니다.');return data}
-async function loadTasks(){try{const data=await api('load');tasks=(data.tasks?.length?data.tasks:seed).map(normalizeTask);render();showSync(data.tasks?.length?'서버 데이터를 불러왔습니다.':'서버가 비어 있어 예시 데이터를 표시합니다. 첫 변경 시 저장됩니다.','success')}catch(error){tasks=seed.map(normalizeTask);render();showSync(error.message,'error')}}
+async function loadTasks(){try{const data=await api('load');tasks=(data.tasks||[]).map(normalizeTask);render();showSync(data.tasks?.length?'서버 데이터를 불러왔습니다.':'등록된 업무가 없습니다.','success')}catch(error){tasks=[];render();showSync(error.message,'error')}}
 function queueSave(){clearTimeout(saveTimer);showSync('변경 내용을 저장하는 중입니다.');saveTimer=setTimeout(saveAll,350)}
 async function saveAll(){try{await api('save',{tasks});showSync('모든 변경 내용이 저장되었습니다.','success');return true}catch(error){showSync(`저장 실패: ${error.message}`,'error');return false}}
 function syncFixedColumns(){const headers=[...document.querySelectorAll('.ledger-head-fields > .fixed')];let offset=0;headers.forEach((header,index)=>{document.querySelectorAll(`.ledger-head-fields > :nth-child(${index+1}), #ledgerBody > tr > :nth-child(${index+1})`).forEach(cell=>cell.style.insetInlineStart=`${offset}px`);offset+=header.getBoundingClientRect().width})}
