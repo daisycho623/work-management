@@ -52,8 +52,8 @@
         </section>
         <section class="work-ledger-box">
           <div class="ledger-meta">
-            <span><strong id="visibleCount">0개</strong> 업무 · 셀을 선택해 작업시간을 바로 입력하세요.</span>
-            <span>단위: 시간(h)</span>
+            <span><strong id="visibleCount">0개</strong> 업무 · 셀을 선택해 작업 공수를 바로 입력하세요.</span>
+            <span>단위: 공수 (1 = 8시간)</span>
           </div>
           <div class="table-scroll">
             <table>
@@ -112,13 +112,14 @@
         </label>
       </div>
       <div class="dialog-actions">
+        <button class="button danger" id="deleteButton" type="button" hidden>삭제</button>
         <button class="button" type="button" data-dialog-close>취소</button>
         <button class="button primary" value="default">등록</button>
       </div>
     </form>
   </dialog>
   <script src="config.js?v=20260909-1"></script>
-  <script src="app.js?v=20260909-2"></script>
+  <script src="app.js?v=20260909-4"></script>
 </body>
 
 </html>

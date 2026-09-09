@@ -83,6 +83,17 @@ select {
   color: #fff;
 }
 
+.button.danger {
+  margin-right: auto;
+  border-color: #f2c3ca;
+  color: var(--red);
+  background: #fff5f6;
+}
+
+.button.danger:hover {
+  background: #ffe8eb;
+}
+
 .content {
   padding: 22px 30px;
 }
@@ -237,8 +248,8 @@ thead th {
 }
 
 .day {
-  width: 42px;
-  min-width: 42px;
+  width: 52px;
+  min-width: 52px;
   padding: 0;
   text-align: center;
 }
