@@ -377,6 +377,22 @@ thead th {
   margin-top: 2px;
 }
 
+#ledgerHead .day.today,
+#ledgerBody td.day.today,
+#ledgerFoot td.day.today {
+  background: #ffe8f3;
+  color: #a3195b;
+}
+
+#ledgerHead .day.today small {
+  color: #a3195b;
+  font-weight: 800;
+}
+
+#ledgerBody td.day.today .hour-input {
+  background: #ffe8f3;
+}
+
 .task-name {
   max-width: 382px;
   overflow: hidden;
@@ -414,34 +430,42 @@ thead th {
   outline: none;
 }
 
-.status-planned {
-  background: #fff2cc;
+.status-select.status-planned {
+  background-color: #fff2cc;
   color: var(--ink);
 }
 
-.status-on-hold {
-  background: #d9d9d9;
+.status-select.status-on-hold {
+  background-color: #d9d9d9;
   color: var(--ink);
 }
 
-.status-in-progress {
-  background: #d9ead3;
+.status-select.status-in-progress {
+  background-color: #d9ead3;
   color: var(--ink);
 }
 
-.status-review {
-  background: #d9d2e9;
+.status-select.status-review {
+  background-color: #d9d2e9;
   color: var(--ink);
 }
 
-.status-waiting {
-  background: #c9daf8;
+.status-select.status-waiting {
+  background-color: #c9daf8;
   color: var(--ink);
 }
 
-.status-completed {
+.status-select.status-completed {
+  background-color: #cccccc;
+  color: var(--ink);
+}
+
+#ledgerBody tr.row-status-completed > .fixed {
   background: #cccccc;
-  color: var(--ink);
+}
+
+#ledgerBody tr.row-status-on-hold > .fixed {
+  background: #d9d9d9;
 }
 
 .hour-input {
@@ -672,6 +696,23 @@ tfoot td {
   text-align: center;
 }
 
+.leave-total {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f8fa;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.leave-total strong {
+  color: var(--ink);
+  font-size: 15px;
+}
+
 .leave-help {
   margin: 0;
   color: var(--muted);
@@ -802,28 +843,4 @@ tfoot td {
   .form-field.full {
     grid-column: auto;
   }
-}
-
-#ledgerHead .day.today,
-#ledgerBody td.day.today,
-#ledgerFoot td.day.today {
-  background: #ffe8f3;
-  color: #a3195b;
-}
-
-#ledgerHead .day.today small {
-  color: #a3195b;
-  font-weight: 800;
-}
-
-#ledgerBody td.day.today .hour-input {
-  background: #ffe8f3;
-}
-
-#ledgerBody tr.row-status-completed > .fixed {
-  background: #cccccc;
-}
-
-#ledgerBody tr.row-status-on-hold > .fixed {
-  background: #d9d9d9;
 }
