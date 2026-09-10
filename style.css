@@ -41,6 +41,9 @@ select {
 
 .main {
   min-width: 0;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
 }
 
 .topbar {
@@ -796,4 +799,20 @@ tfoot td {
   .form-field.full {
     grid-column: auto;
   }
+}
+
+#ledgerHead .day.today,
+#ledgerBody td.day.today,
+#ledgerFoot td.day.today {
+  background: #ffe8f3;
+  color: #a3195b;
+}
+
+#ledgerHead .day.today small {
+  color: #a3195b;
+  font-weight: 800;
+}
+
+#ledgerBody td.day.today .hour-input {
+  background: #ffe8f3;
 }
