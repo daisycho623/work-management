@@ -36,6 +36,8 @@ select {
 }
 
 .app-shell {
+  display: grid;
+  place-items: center;
   min-height: 100vh;
 }
 
@@ -43,6 +45,7 @@ select {
   min-width: 0;
   width: 100%;
   max-width: 1080px;
+  min-height: auto;
   margin: 0 auto;
 }
 
@@ -411,34 +414,34 @@ thead th {
   outline: none;
 }
 
-.status-completed {
-  background: #e6f5ee;
-  color: var(--green);
-}
-
-.status-in-progress {
-  background: #eaf0ff;
-  color: #3559bc;
-}
-
-.status-review {
-  background: #fff2df;
-  color: var(--amber);
+.status-planned {
+  background: #fff2cc;
+  color: var(--ink);
 }
 
 .status-on-hold {
-  background: #f1f1f4;
-  color: #686b74;
+  background: #d9d9d9;
+  color: var(--ink);
 }
 
-.status-planned {
-  background: #f5eaff;
-  color: #7b44a8;
+.status-in-progress {
+  background: #d9ead3;
+  color: var(--ink);
+}
+
+.status-review {
+  background: #d9d2e9;
+  color: var(--ink);
 }
 
 .status-waiting {
-  background: #fff6d8;
-  color: #8b6900;
+  background: #c9daf8;
+  color: var(--ink);
+}
+
+.status-completed {
+  background: #cccccc;
+  color: var(--ink);
 }
 
 .hour-input {
@@ -815,4 +818,12 @@ tfoot td {
 
 #ledgerBody td.day.today .hour-input {
   background: #ffe8f3;
+}
+
+#ledgerBody tr.row-status-completed > .fixed {
+  background: #cccccc;
+}
+
+#ledgerBody tr.row-status-on-hold > .fixed {
+  background: #d9d9d9;
 }
