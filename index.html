@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>퍼블리싱 업무대장</title>
-  <link rel="stylesheet" href="style.css?v=20260910-17">
+  <link rel="stylesheet" href="style.css?v=20260911-23">
 </head>
 
 <body>
@@ -55,11 +55,12 @@
         </section>
         <section class="work-ledger-box">
           <div class="ledger-meta">
-            <span><strong id="visibleCount">0개</strong> 업무 · 셀을 선택해 작업 공수를 바로 입력하세요.</span>
-            <span>단위: 공수 (1 = 8시간)</span>
+            <span><strong id="visibleCount">0개</strong> 업무 · 셀을 선택해 작업 시간을 정수로 입력하세요.</span>
+            <span>입력: 시간(h) · 합계: 공수(시간 합 ÷ 8)</span>
           </div>
           <div class="table-scroll">
             <table>
+              <colgroup id="ledgerColumns"></colgroup>
               <thead id="ledgerHead"></thead>
               <tbody id="ledgerBody"></tbody>
               <tfoot id="ledgerFoot"></tfoot>
@@ -168,7 +169,7 @@
     </form>
   </dialog>
   <script src="config.js?v=20260909-1"></script>
-  <script src="app.js?v=20260910-17"></script>
+  <script src="app.js?v=20260911-20"></script>
 </body>
 
 </html>

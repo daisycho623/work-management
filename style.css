@@ -52,8 +52,6 @@ select {
 .topbar {
   height: 78px;
   padding: 0 30px;
-  background: #fff;
-  border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -226,7 +224,6 @@ select {
 
 .ledger-meta {
   padding: 13px 16px;
-  border-bottom: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -246,6 +243,7 @@ select {
 table {
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
   min-width: 900px;
   width: 100%;
   font-size: 12px;
@@ -278,20 +276,17 @@ thead th {
 }
 
 .col-no {
-  width: 46px;
-  min-width: 46px;
+  width: 52px;
   text-align: center;
 }
 
 .col-rms {
-  width: 76px;
-  min-width: 76px;
+  width: 112px;
   text-align: center;
 }
 
 .col-date {
-  width: 50px;
-  min-width: 50px;
+  width: 54px;
   text-align: center;
 }
 
@@ -309,13 +304,11 @@ thead th {
 }
 
 .col-task {
-  width: 400px;
-  min-width: 400px;
+  width: 360px;
 }
 
 .col-status {
-  width: 75px;
-  min-width: 75px;
+  width: 74px;
   text-align: center;
 }
 
@@ -350,6 +343,10 @@ thead th {
 .day {
   padding: 0;
   text-align: center;
+}
+
+.col-total {
+  width: 70px;
 }
 
 #ledgerHead th:last-child,
@@ -472,10 +469,17 @@ thead th {
   width: 100%;
   height: 32px;
   border: 0;
+  appearance: textfield;
   background: transparent;
   text-align: center;
   color: #34363b;
   outline: none;
+}
+
+.hour-input::-webkit-inner-spin-button,
+.hour-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
 }
 
 .hour-input:focus {
@@ -822,11 +826,6 @@ tfoot td {
 
   .field {
     width: 100%;
-  }
-
-  .col-task {
-    width: 280px;
-    min-width: 280px;
   }
 
   .col-no,
