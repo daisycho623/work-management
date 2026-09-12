@@ -429,45 +429,42 @@ thead th {
   font-weight: 800;
   font-size: 11px;
   outline: none;
-}
-
-.status-select.status-planned {
-  background-color: #fff2cc;
+  background: transparent;
   color: var(--ink);
 }
 
-.status-select.status-on-hold {
-  background-color: #d9d9d9;
-  color: var(--ink);
+.col-status.status-planned {
+  background: #fff2cc;
 }
 
-.status-select.status-in-progress {
-  background-color: #d9ead3;
-  color: var(--ink);
+.col-status.status-canceled {
+  background: #d5d5d5;
 }
 
-.status-select.status-review {
-  background-color: #d9d2e9;
-  color: var(--ink);
+.col-status.status-in-progress {
+  background: #d9ead3;
 }
 
-.status-select.status-waiting {
-  background-color: #c9daf8;
-  color: var(--ink);
+.col-status.status-review {
+  background: #d9d2e9;
 }
 
-.status-select.status-completed {
-  background-color: #cccccc;
-  color: var(--ink);
+.col-status.status-waiting {
+  background: #c9daf8;
+}
+
+.col-status.status-completed {
+  background: #e0e0e0;
+}
+
+#ledgerBody tr.row-status-canceled > .fixed {
+  background: #d5d5d5;
 }
 
 #ledgerBody tr.row-status-completed > .fixed {
-  background: #cccccc;
+  background: #e0e0e0;
 }
 
-#ledgerBody tr.row-status-on-hold > .fixed {
-  background: #d9d9d9;
-}
 
 .hour-input {
   width: 100%;
