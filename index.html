@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>퍼블리싱 업무대장</title>
-  <link rel="stylesheet" href="style.css?v=20260912-4">
+  <link rel="stylesheet" href="style.css?v=20260912-5">
 </head>
 
 <body>
@@ -176,8 +176,9 @@
       </div>
       <div class="leave-management-body">
         <div class="leave-list-box">
-          <strong id="holidayListTitle">대한민국 공휴일 및 추가 휴일</strong>
+          <strong id="holidayListTitle">공휴일 및 추가 휴일</strong>
           <div class="leave-list" id="holidayList"></div>
+          <div class="leave-total"><span>총 휴일 일수</span><strong id="holidayTotal">0일</strong></div>
         </div>
         <div class="leave-form-box">
           <label class="form-field">
@@ -188,7 +189,7 @@
             <span>날짜</span>
             <input name="holidayDate" type="date" min="2026-01-01" required>
           </label>
-          <p class="leave-help">추가한 휴일은 대한민국 공휴일과 동일하게 업무표와 주차 계산에서 제외됩니다.</p>
+          <p class="leave-help">추가한 휴일은 공휴일과 동일하게 업무표와 주차 계산에서 제외됩니다.</p>
         </div>
       </div>
       <div class="dialog-actions">
@@ -199,7 +200,7 @@
     </form>
   </dialog>
   <script src="config.js?v=20260909-1"></script>
-  <script src="app.js?v=20260912-5"></script>
+  <script src="app.js?v=20260912-9"></script>
 </body>
 
 </html>

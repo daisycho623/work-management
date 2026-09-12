@@ -59,13 +59,13 @@ select {
 
 .title-box small {
   color: var(--pink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.1em;
 }
 
 .title-box h1 {
-  font-size: 21px;
+  font-size: 22px;
   margin: 4px 0 0;
 }
 
@@ -264,7 +264,7 @@ thead th {
   height: 34px !important;
   background: #282a31 !important;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .col-no {
@@ -366,7 +366,7 @@ thead th {
 .day small {
   display: block;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 10px;
   margin-top: 2px;
 }
 
@@ -419,7 +419,7 @@ thead th {
   border-radius: 12px;
   padding: 5px 8px;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 12px;
   outline: none;
   background: transparent;
   color: var(--ink);
@@ -513,7 +513,7 @@ tfoot td {
 .footer-note {
   padding: 12px 2px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .dialog {
@@ -644,7 +644,7 @@ tfoot td {
 .leave-list-box > strong {
   display: block;
   margin-bottom: 9px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .leave-list {
@@ -681,14 +681,23 @@ tfoot td {
   cursor: default;
 }
 
-.holiday-custom::after {
+.holiday-custom span:last-child {
+  display: flex;
+  align-items: center;
+}
+
+.holiday-custom span:last-child::before {
   content: "추가";
-  margin-left: 8px;
-  padding: 2px 5px;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  margin-right: 8px;
+  padding: 0 5px;
+  border-radius: 12px;
   background: #fff3f9;
   color: var(--pink);
-  font-size: 9px;
+  font-size: 10px;
+  line-height: 1;
 }
 
 .leave-list-empty {
@@ -714,7 +723,7 @@ tfoot td {
 
 .leave-total strong {
   color: var(--ink);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .leave-help {
