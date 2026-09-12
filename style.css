@@ -362,6 +362,10 @@ thead th {
   background: #fafafa;
 }
 
+.total-cell:last-child {
+  border-right: none;
+}
+
 .day.weekend,
 .weekend {
   background: var(--weekend);
@@ -503,20 +507,11 @@ tfoot td {
   box-shadow: 5px 0 8px #20212410;
 }
 
-.weekly-summary th,
-.weekly-summary td {
-  background: #f7f4ff;
-  color: #6942a0;
-}
-
 .daily-summary th,
 .daily-summary td {
   background: #fff1f7;
   color: #a91d65;
-}
-
-.weekly-total.report-day {
-  box-shadow: inset 0 0 0 1px #bca9df;
+  border-bottom: none;
 }
 
 .empty-box {
