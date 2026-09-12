@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>퍼블리싱 업무대장</title>
-  <link rel="stylesheet" href="style.css?v=20260912-2">
+  <link rel="stylesheet" href="style.css?v=20260912-4">
 </head>
 
 <body>
@@ -21,6 +21,7 @@
             rel="noopener" class="button" target="_blank" style="display:grid;place-items:center;text-decoration:none">
             원본 시트 ↗
           </a>
+          <button class="button" id="holidayButton" type="button">휴일 관리</button>
           <button class="button" id="leaveButton" type="button">휴가 관리</button>
           <button class="button" id="reorderButton" type="button">순서 변경</button>
           <button class="button primary" id="addButton">+ 업무 등록</button>
@@ -47,10 +48,9 @@
             <input class="field search" id="search" type="search" placeholder="RMS, Jira 또는 업무명 검색">
           </div>
           <div class="month-control">
-            <button class="icon-button" id="prevMonth">‹</button>
-            <strong id="monthLabel">9월</strong>
-            <button class="icon-button" id="nextMonth">›</button>
-            <select class="field week-select" id="weekSelect" aria-label="주차 선택"></select>
+            <button class="icon-button" id="prevWeek" type="button" aria-label="이전 주차">‹</button>
+            <strong id="monthLabel">0000년 00월 0주차</strong>
+            <button class="icon-button" id="nextWeek" type="button" aria-label="다음 주차">›</button>
           </div>
         </section>
         <section class="work-ledger-box">
@@ -168,8 +168,38 @@
       </div>
     </form>
   </dialog>
+  <dialog class="dialog leave-dialog" id="holidayDialog">
+    <form method="dialog" id="holidayForm">
+      <div class="dialog-head">
+        <h2>공휴일 및 휴일 관리</h2>
+        <button class="dialog-close" type="button" data-holiday-dialog-close aria-label="닫기">×</button>
+      </div>
+      <div class="leave-management-body">
+        <div class="leave-list-box">
+          <strong id="holidayListTitle">대한민국 공휴일 및 추가 휴일</strong>
+          <div class="leave-list" id="holidayList"></div>
+        </div>
+        <div class="leave-form-box">
+          <label class="form-field">
+            <span>휴일명</span>
+            <input name="holidayName" placeholder="예: 창립기념일" required>
+          </label>
+          <label class="form-field">
+            <span>날짜</span>
+            <input name="holidayDate" type="date" min="2026-01-01" required>
+          </label>
+          <p class="leave-help">추가한 휴일은 대한민국 공휴일과 동일하게 업무표와 주차 계산에서 제외됩니다.</p>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="button danger" id="deleteHolidayButton" type="button" hidden>삭제</button>
+        <button class="button" type="button" data-holiday-dialog-close>취소</button>
+        <button class="button primary" id="saveHolidayButton" value="default">등록</button>
+      </div>
+    </form>
+  </dialog>
   <script src="config.js?v=20260909-1"></script>
-  <script src="app.js?v=20260912-2"></script>
+  <script src="app.js?v=20260912-5"></script>
 </body>
 
 </html>
