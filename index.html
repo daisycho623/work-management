@@ -1,206 +1,297 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>퍼블리싱 업무대장</title>
+    <link rel="stylesheet" href="style.css?v=20260912-5" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>퍼블리싱 업무대장</title>
-  <link rel="stylesheet" href="style.css?v=20260912-5">
-</head>
-
-<body>
-  <div class="app-shell">
-    <div class="main">
-      <header class="topbar">
-        <div class="title-box">
-          <small>WORK LEDGER</small>
-          <h1>퍼블리싱 업무대장</h1>
+  <body>
+    <div class="app-shell">
+      <div class="main">
+        <header class="topbar">
+          <div class="title-box">
+            <small>WORK LEDGER</small>
+            <h1>퍼블리싱 업무대장</h1>
+          </div>
+          <div class="top-actions">
+            <a
+              href="https://docs.google.com/spreadsheets/d/1qrJOJKsQIhuCz0naAQQNnZsHF5md09fR0PuH_Dk0_SE/edit?usp=sharing"
+              rel="noopener"
+              class="button"
+              target="_blank"
+              style="display: grid; place-items: center; text-decoration: none"
+            >
+              원본 시트 ↗
+            </a>
+            <button class="button" id="holidayButton" type="button">
+              휴일 관리
+            </button>
+            <button class="button" id="leaveButton" type="button">
+              휴가 관리
+            </button>
+            <button class="button" id="reorderButton" type="button">
+              순서 변경
+            </button>
+            <button class="button primary" id="addButton">+ 업무 등록</button>
+          </div>
+        </header>
+        <main class="content">
+          <div class="sync-banner" id="syncBanner">
+            서버 데이터를 불러오는 중입니다.
+          </div>
+          <section class="control-box">
+            <div class="filters">
+              <select class="field" id="categoryFilter">
+                <option value="">전체 구분</option>
+                <option>플러스탭</option>
+                <option>전사 운영</option>
+              </select>
+              <select class="field" id="statusFilter">
+                <option value="">전체 진행현황</option>
+                <option>예정</option>
+                <option>취소</option>
+                <option>진행</option>
+                <option>검수</option>
+                <option>대기</option>
+                <option>완료</option>
+              </select>
+              <input
+                class="field search"
+                id="search"
+                type="search"
+                placeholder="RMS, Jira 또는 업무명 검색"
+              />
+            </div>
+            <div class="month-control">
+              <button
+                class="icon-button"
+                id="prevWeek"
+                type="button"
+                aria-label="이전 주차"
+              >
+                ‹
+              </button>
+              <strong id="monthLabel">0000년 00월 0주차</strong>
+              <button
+                class="icon-button"
+                id="nextWeek"
+                type="button"
+                aria-label="다음 주차"
+              >
+                ›
+              </button>
+            </div>
+          </section>
+          <section class="work-ledger-box">
+            <div class="ledger-meta">
+              <span
+                ><strong id="visibleCount">0개</strong> 업무 · 셀을 선택해 작업
+                시간을 정수로 입력하세요.</span
+              >
+              <span>입력: 시간(h) · 합계: 공수(시간 합 ÷ 8)</span>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <colgroup id="ledgerColumns"></colgroup>
+                <thead id="ledgerHead"></thead>
+                <tbody id="ledgerBody"></tbody>
+                <tfoot id="ledgerFoot"></tfoot>
+              </table>
+              <div class="empty-box" id="empty">검색 결과가 없습니다.</div>
+            </div>
+          </section>
+          <p class="footer-note">
+            모든 변경 내용은 연결된 Google Sheet에 저장됩니다. 저장 완료 표시를
+            확인한 뒤 창을 닫아주세요.
+          </p>
+        </main>
+      </div>
+    </div>
+    <dialog class="dialog" id="taskDialog">
+      <form method="dialog" id="taskForm">
+        <div class="dialog-head">
+          <h2>새 업무 등록</h2>
+          <button
+            class="dialog-close"
+            type="button"
+            data-dialog-close
+            aria-label="닫기"
+          >
+            ×
+          </button>
         </div>
-        <div class="top-actions">
-          <a href="https://docs.google.com/spreadsheets/d/1qrJOJKsQIhuCz0naAQQNnZsHF5md09fR0PuH_Dk0_SE/edit?usp=sharing"
-            rel="noopener" class="button" target="_blank" style="display:grid;place-items:center;text-decoration:none">
-            원본 시트 ↗
-          </a>
-          <button class="button" id="holidayButton" type="button">휴일 관리</button>
-          <button class="button" id="leaveButton" type="button">휴가 관리</button>
-          <button class="button" id="reorderButton" type="button">순서 변경</button>
-          <button class="button primary" id="addButton">+ 업무 등록</button>
-        </div>
-      </header>
-      <main class="content">
-        <div class="sync-banner" id="syncBanner">서버 데이터를 불러오는 중입니다.</div>
-        <section class="control-box">
-          <div class="filters">
-            <select class="field" id="categoryFilter">
-              <option value="">전체 구분</option>
-              <option>플러스탭</option>
+        <div class="form-box">
+          <label class="form-field">
+            <span>구분</span>
+            <select name="category">
+              <option selected>플러스탭</option>
               <option>전사 운영</option>
             </select>
-            <select class="field" id="statusFilter">
-              <option value="">전체 진행현황</option>
-              <option>예정</option>
+          </label>
+          <label class="form-field">
+            <span>RMS, Jira</span
+            ><input name="rms" placeholder="예: 00000 또는 DCBGIT-00000" />
+          </label>
+          <div class="form-field">
+            <span>반영일</span>
+            <div class="date-entry">
+              <input id="releaseDate" type="date" />
+              <button class="button" id="addDate" type="button">추가</button>
+            </div>
+          </div>
+          <div class="form-field">
+            <span>선택한 반영일</span>
+            <div class="date-chips" id="dateChips"></div>
+          </div>
+          <label class="form-field full">
+            <span>업무명</span>
+            <input name="task" required placeholder="업무명을 입력하세요" />
+          </label>
+          <label class="form-field full">
+            <span>진행현황</span>
+            <select name="status">
+              <option selected>예정</option>
               <option>취소</option>
               <option>진행</option>
               <option>검수</option>
               <option>대기</option>
               <option>완료</option>
             </select>
-            <input class="field search" id="search" type="search" placeholder="RMS, Jira 또는 업무명 검색">
-          </div>
-          <div class="month-control">
-            <button class="icon-button" id="prevWeek" type="button" aria-label="이전 주차">‹</button>
-            <strong id="monthLabel">0000년 00월 0주차</strong>
-            <button class="icon-button" id="nextWeek" type="button" aria-label="다음 주차">›</button>
-          </div>
-        </section>
-        <section class="work-ledger-box">
-          <div class="ledger-meta">
-            <span><strong id="visibleCount">0개</strong> 업무 · 셀을 선택해 작업 시간을 정수로 입력하세요.</span>
-            <span>입력: 시간(h) · 합계: 공수(시간 합 ÷ 8)</span>
-          </div>
-          <div class="table-scroll">
-            <table>
-              <colgroup id="ledgerColumns"></colgroup>
-              <thead id="ledgerHead"></thead>
-              <tbody id="ledgerBody"></tbody>
-              <tfoot id="ledgerFoot"></tfoot>
-            </table>
-            <div class="empty-box" id="empty">검색 결과가 없습니다.</div>
-          </div>
-        </section>
-        <p class="footer-note">모든 변경 내용은 연결된 Google Sheet에 저장됩니다. 저장 완료 표시를 확인한 뒤 창을 닫아주세요.</p>
-      </main>
-    </div>
-  </div>
-  <dialog class="dialog" id="taskDialog">
-    <form method="dialog" id="taskForm">
-      <div class="dialog-head">
-        <h2>새 업무 등록</h2>
-        <button class="dialog-close" type="button" data-dialog-close aria-label="닫기">×</button>
-      </div>
-      <div class="form-box">
-        <label class="form-field">
-          <span>구분</span>
-          <select name="category">
-            <option selected>플러스탭</option>
-            <option>전사 운영</option>
-          </select>
-        </label>
-        <label class="form-field">
-          <span>RMS, Jira</span><input name="rms" placeholder="예: 00000 또는 DCBGIT-00000">
-        </label>
-        <div class="form-field">
-          <span>반영일</span>
-          <div class="date-entry">
-            <input id="releaseDate" type="date">
-            <button class="button" id="addDate" type="button">추가</button>
-          </div>
+          </label>
         </div>
-        <div class="form-field">
-          <span>선택한 반영일</span>
-          <div class="date-chips" id="dateChips"></div>
+        <div class="dialog-actions">
+          <button class="button danger" id="deleteButton" type="button" hidden>
+            삭제
+          </button>
+          <button class="button" type="button" data-dialog-close>취소</button>
+          <button class="button primary" value="default">등록</button>
         </div>
-        <label class="form-field full">
-          <span>업무명</span>
-          <input name="task" required placeholder="업무명을 입력하세요">
-        </label>
-        <label class="form-field full">
-          <span>진행현황</span>
-          <select name="status">
-            <option selected>예정</option>
-            <option>취소</option>
-            <option>진행</option>
-            <option>검수</option>
-            <option>대기</option>
-            <option>완료</option>
-          </select>
-        </label>
-      </div>
-      <div class="dialog-actions">
-        <button class="button danger" id="deleteButton" type="button" hidden>삭제</button>
-        <button class="button" type="button" data-dialog-close>취소</button>
-        <button class="button primary" value="default">등록</button>
-      </div>
-    </form>
-  </dialog>
-  <dialog class="dialog leave-dialog" id="leaveDialog">
-    <form method="dialog" id="leaveForm">
-      <div class="dialog-head">
-        <h2>휴가 관리</h2>
-        <button class="dialog-close" type="button" data-leave-dialog-close aria-label="닫기">×</button>
-      </div>
-      <div class="leave-management-body">
-        <div class="leave-list-box">
-          <strong>등록된 휴가</strong>
-          <div class="leave-list" id="leaveList"></div>
-          <div class="leave-total"><span>대체휴가 제외 휴가 일수</span><strong id="leaveTotalExcludingSubstitute">0일</strong></div>
-          <div class="leave-total"><span>총 휴가 일수</span><strong id="leaveTotal">0일</strong></div>
+      </form>
+    </dialog>
+    <dialog class="dialog leave-dialog" id="leaveDialog">
+      <form method="dialog" id="leaveForm">
+        <div class="dialog-head">
+          <h2>휴가 관리</h2>
+          <button
+            class="dialog-close"
+            type="button"
+            data-leave-dialog-close
+            aria-label="닫기"
+          >
+            ×
+          </button>
         </div>
-        <div class="leave-form-box">
-          <div class="leave-type-row">
+        <div class="leave-management-body">
+          <div class="leave-list-box">
+            <strong>등록된 휴가</strong>
+            <div class="leave-list" id="leaveList"></div>
+            <div class="leave-total">
+              <span>대체휴가 제외 휴가 일수</span
+              ><strong id="leaveTotalExcludingSubstitute">0일</strong>
+            </div>
+            <div class="leave-total">
+              <span>총 휴가 일수</span><strong id="leaveTotal">0일</strong>
+            </div>
+          </div>
+          <div class="leave-form-box">
+            <div class="leave-type-row">
+              <label class="form-field">
+                <span>휴가 유형</span>
+                <select name="leaveType" required>
+                  <option value="annual">연차</option>
+                  <option value="half">반차</option>
+                  <option value="quarter">반반차</option>
+                </select>
+              </label>
+              <label class="leave-check">
+                <input name="isSubstitute" type="checkbox" />
+                <span>대체휴가</span>
+              </label>
+            </div>
             <label class="form-field">
-              <span>휴가 유형</span>
-              <select name="leaveType" required>
-                <option value="annual">연차</option>
-                <option value="half">반차</option>
-                <option value="quarter">반반차</option>
-              </select>
+              <span>날짜</span>
+              <input name="leaveDate" type="date" min="2026-01-01" required />
             </label>
-            <label class="leave-check">
-              <input name="isSubstitute" type="checkbox">
-              <span>대체휴가</span>
-            </label>
+            <p class="leave-help">
+              선택한 날짜의 업무표 열에 배경색만 표시됩니다.<br />
+              공수와 합계는 변경되지 않습니다.
+            </p>
           </div>
-          <label class="form-field">
-            <span>날짜</span>
-            <input name="leaveDate" type="date" min="2026-01-01" required>
-          </label>
-          <p class="leave-help">
-            선택한 날짜의 업무표 열에 배경색만 표시됩니다.<br />
-            공수와 합계는 변경되지 않습니다.
-          </p>
         </div>
-      </div>
-      <div class="dialog-actions">
-        <button class="button danger" id="deleteLeaveButton" type="button" hidden>삭제</button>
-        <button class="button" type="button" data-leave-dialog-close>취소</button>
-        <button class="button primary" id="saveLeaveButton" value="default">등록</button>
-      </div>
-    </form>
-  </dialog>
-  <dialog class="dialog leave-dialog" id="holidayDialog">
-    <form method="dialog" id="holidayForm">
-      <div class="dialog-head">
-        <h2>공휴일 및 휴일 관리</h2>
-        <button class="dialog-close" type="button" data-holiday-dialog-close aria-label="닫기">×</button>
-      </div>
-      <div class="leave-management-body">
-        <div class="leave-list-box">
-          <strong id="holidayListTitle">공휴일 및 추가 휴일</strong>
-          <div class="leave-list" id="holidayList"></div>
-          <div class="leave-total"><span>총 휴일 일수</span><strong id="holidayTotal">0일</strong></div>
+        <div class="dialog-actions">
+          <button
+            class="button danger"
+            id="deleteLeaveButton"
+            type="button"
+            hidden
+          >
+            삭제
+          </button>
+          <button class="button" type="button" data-leave-dialog-close>
+            취소
+          </button>
+          <button class="button primary" id="saveLeaveButton" value="default">
+            등록
+          </button>
         </div>
-        <div class="leave-form-box">
-          <label class="form-field">
-            <span>휴일명</span>
-            <input name="holidayName" placeholder="예: 창립기념일" required>
-          </label>
-          <label class="form-field">
-            <span>날짜</span>
-            <input name="holidayDate" type="date" min="2026-01-01" required>
-          </label>
-          <p class="leave-help">추가한 휴일은 공휴일과 동일하게 업무표와 주차 계산에서 제외됩니다.</p>
+      </form>
+    </dialog>
+    <dialog class="dialog leave-dialog" id="holidayDialog">
+      <form method="dialog" id="holidayForm">
+        <div class="dialog-head">
+          <h2>공휴일 및 휴일 관리</h2>
+          <button
+            class="dialog-close"
+            type="button"
+            data-holiday-dialog-close
+            aria-label="닫기"
+          >
+            ×
+          </button>
         </div>
-      </div>
-      <div class="dialog-actions">
-        <button class="button danger" id="deleteHolidayButton" type="button" hidden>삭제</button>
-        <button class="button" type="button" data-holiday-dialog-close>취소</button>
-        <button class="button primary" id="saveHolidayButton" value="default">등록</button>
-      </div>
-    </form>
-  </dialog>
-  <script src="config.js?v=20260909-1"></script>
-  <script src="app.js?v=20260912-9"></script>
-</body>
-
+        <div class="leave-management-body">
+          <div class="leave-list-box">
+            <strong id="holidayListTitle">공휴일 및 추가 휴일</strong>
+            <div class="leave-list" id="holidayList"></div>
+            <div class="leave-total">
+              <span>총 휴일 일수</span><strong id="holidayTotal">0일</strong>
+            </div>
+          </div>
+          <div class="leave-form-box">
+            <label class="form-field">
+              <span>휴일명</span>
+              <input name="holidayName" placeholder="예: 창립기념일" required />
+            </label>
+            <label class="form-field">
+              <span>날짜</span>
+              <input name="holidayDate" type="date" min="2026-01-01" required />
+            </label>
+            <p class="leave-help">
+              추가한 휴일은 공휴일과 동일하게 업무표와 주차 계산에서 제외됩니다.
+            </p>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button
+            class="button danger"
+            id="deleteHolidayButton"
+            type="button"
+            hidden
+          >
+            삭제
+          </button>
+          <button class="button" type="button" data-holiday-dialog-close>
+            취소
+          </button>
+          <button class="button primary" id="saveHolidayButton" value="default">
+            등록
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <script src="config.js?v=20260909-1"></script>
+    <script src="app.js?v=20260912-9"></script>
+  </body>
 </html>
