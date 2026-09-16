@@ -386,6 +386,14 @@ thead th {
   background: #ffe8f3;
 }
 
+#ledgerBody td.day.release-date {
+  background: #fff0c2;
+}
+
+#ledgerBody td.day.release-date .hour-input {
+  background: transparent;
+}
+
 .task-name {
   max-width: 382px;
   overflow: hidden;
@@ -569,38 +577,6 @@ tfoot td {
   padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
-}
-
-.date-entry {
-  display: flex;
-  gap: 8px;
-}
-
-.date-entry input {
-  flex: 1;
-}
-
-.date-chips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.date-chip {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 8px;
-  border-radius: 16px;
-  background: #f1f3f6;
-}
-
-.date-chip button {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
 }
 
 .dialog-actions {
