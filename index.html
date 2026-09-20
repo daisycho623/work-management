@@ -9,7 +9,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
     />
-    <link rel="stylesheet" href="style.css?v=20260917-1" />
+    <link rel="stylesheet" href="style.css?v=20260921-1" />
   </head>
 
   <body>
@@ -48,6 +48,26 @@
           </div>
           <section class="control-box">
             <div class="filters">
+              <div class="task-tabs" role="tablist" aria-label="업무 표시 범위">
+                <button
+                  class="task-tab active"
+                  type="button"
+                  role="tab"
+                  aria-selected="true"
+                  data-task-scope="active"
+                >
+                  활성
+                </button>
+                <button
+                  class="task-tab"
+                  type="button"
+                  role="tab"
+                  aria-selected="false"
+                  data-task-scope="all"
+                >
+                  전체
+                </button>
+              </div>
               <select class="field" id="categoryFilter">
                 <option value="">전체 구분</option>
                 <option>플러스탭</option>
@@ -290,6 +310,6 @@
       </form>
     </dialog>
     <script src="config.js?v=20260909-1"></script>
-    <script src="app.js?v=20260917-1"></script>
+    <script src="app.js?v=20260921-1"></script>
   </body>
 </html>
