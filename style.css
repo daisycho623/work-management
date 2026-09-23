@@ -554,7 +554,18 @@ tfoot td {
   border-radius: 16px;
   padding: 0;
   width: min(600px, calc(100% - 30px));
+  max-height: calc(100vh - 30px);
+  max-height: calc(100dvh - 30px);
+  overflow: hidden;
   box-shadow: 0 24px 80px #0004;
+}
+
+.dialog > form {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  max-height: calc(100vh - 30px);
+  max-height: calc(100dvh - 265px);
+  overflow: hidden;
 }
 
 .dialog::backdrop {
@@ -566,6 +577,7 @@ tfoot td {
   border-bottom: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
+  background: #fff;
 }
 
 .dialog-head h2 {
@@ -584,6 +596,8 @@ tfoot td {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .form-field {
@@ -611,6 +625,7 @@ tfoot td {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  background: #fff;
 }
 
 .leave-dialog {
@@ -620,6 +635,8 @@ tfoot td {
 .leave-management-body {
   display: grid;
   grid-template-columns: minmax(240px, 0.9fr) minmax(300px, 1.1fr);
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .leave-form-box {
@@ -651,9 +668,7 @@ tfoot td {
   display: grid;
   gap: 6px;
   min-height: 300px;
-  max-height: 420px;
   align-content: start;
-  overflow-y: auto;
 }
 
 .leave-list-item {
@@ -794,7 +809,6 @@ tfoot td {
 @media (max-width: 600px) {
   .leave-list {
     min-height: 180px;
-    max-height: 280px;
   }
 
   .leave-management-body {
