@@ -234,6 +234,9 @@ select {
 }
 
 .work-ledger-box {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -254,7 +257,11 @@ select {
 }
 
 .table-scroll {
+  width: 100%;
+  min-width: 0;
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   max-height: calc(100vh - 210px);
 }
 
@@ -823,14 +830,47 @@ tfoot td {
   .topbar {
     height: auto;
     padding: 15px;
+    display: grid;
+    gap: 14px;
+    align-items: stretch;
   }
 
-  .top-actions .button:first-child {
-    display: none;
+  .top-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .top-actions .button {
+    width: 100%;
+    min-width: 0;
+    padding: 0 8px;
+    white-space: nowrap;
+    font-size: 12px;
   }
 
   .content {
+    min-width: 0;
     padding: 12px;
+  }
+
+  .work-ledger-box {
+    border-radius: 10px;
+  }
+
+  .ledger-meta {
+    display: grid;
+    gap: 5px;
+    align-items: start;
+  }
+
+  .table-scroll {
+    max-width: 100%;
+    max-height: 60vh;
+    max-height: 60dvh;
+    overflow-x: auto;
+    overflow-y: auto;
   }
 
   .control-box {
@@ -856,11 +896,11 @@ tfoot td {
     width: 100%;
   }
 
-  .col-no,
-  .col-rms,
-  .col-date,
-  .col-status {
+  .fixed,
+  .info-head,
+  .summary-label {
     position: static;
+    inset-inline-start: auto !important;
   }
 
   .form-box {
