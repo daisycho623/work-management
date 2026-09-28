@@ -259,10 +259,10 @@ select {
 .table-scroll {
   width: 100%;
   min-width: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
-  max-height: calc(100vh - 210px);
 }
 
 table {
@@ -808,9 +808,6 @@ tfoot td {
     margin-top: 12px;
   }
 
-  .table-scroll {
-    max-height: calc(100vh - 260px);
-  }
 }
 
 @media (max-width: 600px) {
@@ -863,14 +860,6 @@ tfoot td {
     display: grid;
     gap: 5px;
     align-items: start;
-  }
-
-  .table-scroll {
-    max-width: 100%;
-    max-height: 60vh;
-    max-height: 60dvh;
-    overflow-x: auto;
-    overflow-y: auto;
   }
 
   .control-box {
