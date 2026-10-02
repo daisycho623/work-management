@@ -269,7 +269,7 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
-  min-width: 960px;
+  min-width: 900px;
   width: 100%;
   font-size: 12px;
 }
@@ -298,11 +298,6 @@ thead th {
   background: #282a31 !important;
   color: #fff;
   font-size: 14px;
-}
-
-.col-no {
-  width: 52px;
-  text-align: center;
 }
 
 .col-created {
@@ -576,7 +571,7 @@ tfoot td {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   max-height: calc(100vh - 30px);
-  max-height: calc(100dvh - 265px);
+  max-height: calc(100dvh - 30px);
   overflow: hidden;
 }
 
@@ -644,23 +639,33 @@ tfoot td {
   width: min(760px, calc(100% - 30px));
 }
 
+.leave-dialog > form {
+  height: min(620px, calc(100dvh - 30px));
+}
+
 .leave-management-body {
   display: grid;
   grid-template-columns: minmax(240px, 0.9fr) minmax(300px, 1.1fr);
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .leave-form-box {
   padding: 20px 22px;
   display: grid;
   gap: 20px;
+  min-width: 0;
+  min-height: 0;
+  align-content: start;
   border-left: 1px solid var(--line);
 }
 
 .leave-list-box {
   min-width: 0;
+  min-height: 0;
   padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
 }
 
 .leave-type-row {
@@ -679,8 +684,11 @@ tfoot td {
 .leave-list {
   display: grid;
   gap: 6px;
-  min-height: 300px;
+  min-height: 0;
+  flex: 1 1 auto;
   align-content: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .leave-list-item {
@@ -817,11 +825,13 @@ tfoot td {
 
 @media (max-width: 600px) {
   .leave-list {
-    min-height: 180px;
+    flex: 0 0 auto;
+    max-height: 180px;
   }
 
   .leave-management-body {
     grid-template-columns: 1fr;
+    overflow-y: auto;
   }
 
   .leave-form-box {
