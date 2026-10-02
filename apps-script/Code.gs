@@ -1,4 +1,6 @@
 const DATA_SHEET = '웹앱_업무데이터';
+const BACKUP_SHEET = '웹앱_백업데이터';
+const BACKUP_TIMEZONE = 'Asia/Seoul';
 const HOLIDAY_API_URL = 'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo';
 function doGet(){return jsonResponse(loadPayload())}
 function doPost(e){try{const r=JSON.parse((e&&e.postData&&e.postData.contents)||'{}');if(r.action==='load')return jsonResponse(loadPayload(r.year));if(r.action==='holidays')return jsonResponse({ok:true,holidays:getHolidays(r.year)});if(r.action==='save')return jsonResponse(savePayload(r.tasks));return jsonResponse({ok:false,error:'지원하지 않는 요청입니다.'})}catch(error){return jsonResponse({ok:false,error:error.message})}}
@@ -47,4 +49,7 @@ function getHolidays(year){
 }
 function savePayload(tasks){if(!Array.isArray(tasks))throw new Error('업무 데이터 형식이 올바르지 않습니다.');const lock=LockService.getScriptLock();lock.waitLock(10000);try{const s=getDataSheet(),updatedAt=new Date().toISOString();s.getRange('A2:B2').setValues([[JSON.stringify(tasks),updatedAt]]);SpreadsheetApp.flush();return {ok:true,updatedAt}}finally{lock.releaseLock()}}
 function getDataSheet(){const book=SpreadsheetApp.getActiveSpreadsheet();let sheet=book.getSheetByName(DATA_SHEET);if(!sheet){sheet=book.insertSheet(DATA_SHEET);sheet.getRange('A1:B1').setValues([['업무 데이터(JSON)','최종 저장 시각']]);sheet.hideSheet()}return sheet}
+function getBackupSheet(){const book=SpreadsheetApp.getActiveSpreadsheet();let sheet=book.getSheetByName(BACKUP_SHEET);if(!sheet){sheet=book.insertSheet(BACKUP_SHEET);sheet.getRange('A1:D1').setValues([['백업 월','백업 시각','원본 최종 저장 시각','업무 데이터(JSON)']]);sheet.setFrozenRows(1)}return sheet}
+function backupMonthlyData(){const lock=LockService.getScriptLock();lock.waitLock(10000);try{const now=new Date(),backupMonth=Utilities.formatDate(now,BACKUP_TIMEZONE,'yyyy-MM'),backupAt=Utilities.formatDate(now,BACKUP_TIMEZONE,"yyyy-MM-dd'T'HH:mm:ssXXX"),source=getDataSheet(),values=source.getRange('A2:B2').getValues()[0],json=values[0]||'[]',sourceUpdatedAt=values[1]||'',backup=getBackupSheet(),lastRow=backup.getLastRow(),months=lastRow>1?backup.getRange(2,1,lastRow-1,1).getDisplayValues().flat():[],existingIndex=months.indexOf(backupMonth),row=existingIndex>=0?existingIndex+2:lastRow+1;backup.getRange(row,1,1,4).setValues([[backupMonth,backupAt,sourceUpdatedAt,json]]);SpreadsheetApp.flush();return {ok:true,backupMonth,row}}finally{lock.releaseLock()}}
+function setupMonthlyBackupTrigger(){getBackupSheet();ScriptApp.getProjectTriggers().filter(trigger=>trigger.getHandlerFunction()==='backupMonthlyData').forEach(trigger=>ScriptApp.deleteTrigger(trigger));ScriptApp.newTrigger('backupMonthlyData').timeBased().onMonthDay(1).atHour(1).inTimezone(BACKUP_TIMEZONE).create();return '매월 1일 01시대 월간 백업 트리거가 설정되었습니다.'}
 function jsonResponse(payload){return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(ContentService.MimeType.JSON)}
