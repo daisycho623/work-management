@@ -25,14 +25,15 @@ body {
   margin: 0;
 }
 
-button {
-  cursor: pointer;
-}
-
 button,
 input,
 select {
   font: inherit;
+}
+
+button,
+select {
+  cursor: pointer;
 }
 
 .app-shell {
