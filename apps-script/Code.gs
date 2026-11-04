@@ -59,7 +59,8 @@ function setupMonthlyBackupTrigger(){getBackupSheet();ScriptApp.getProjectTrigge
 // 원본은 웹앱_업무데이터의 JSON이며, 이 탭은 저장·불러오기 때 최신 상태로 다시 쓴다(웹 → 시트 단방향).
 // 이 탭 기록이 실패해도 JSON 저장과 불러오기는 유지된다.
 const TABLE_START_DATE='2026-09-01';
-const TABLE_VERSION='v5';
+const TABLE_VERSION='v6';
+const TABLE_FONT='Roboto';
 const TABLE_TIME_COLUMN_WIDTH=40;
 const TABLE_INFO_HEADERS=['등록일','RMS, Jira','업무명','반영일','진행현황','비고'];
 const TABLE_LEAVE_LABELS={annual:'연차',half:'반차',quarter:'반반차'};
@@ -108,7 +109,7 @@ function buildTableRows(tasks,options){
     const releaseDate=(Array.isArray(task.dates)?task.dates:(task.date?[task.date]:[])).filter(Boolean).sort()[0]||'';
     return [task.createdDate||'',task.rms||'',task.task||'',releaseDate,task.status==='보류'?'취소':(task.status||''),task.note||'',...cells,total||'',total?toDays(total):''];
   });
-  const leaveRow=[...TABLE_INFO_HEADERS.map(header=>header==='업무명'?'휴가':''),...columns.map(column=>column.date&&leaves[column.date]?tableLeaveLabel(leaves[column.date]):''),'',''];
+  const leaveRow=[...TABLE_INFO_HEADERS.map((_,index)=>index===0?'휴가':''),...columns.map(column=>column.date&&leaves[column.date]?tableLeaveLabel(leaves[column.date]):''),'',''];
   return {rows:[monthRow,dayRow,...rows,leaveRow],monthTotalColumns:columns.map((column,index)=>column.month?TABLE_INFO_HEADERS.length+index+1:0).filter(Boolean),dateCount:dates.length,taskCount:visible.length};
 }
 function tableToday(){return Utilities.formatDate(new Date(),BACKUP_TIMEZONE,'yyyy-MM-dd')}
@@ -118,9 +119,11 @@ function writeTableSheet(tasks,updatedAt){
   const today=tableToday(),built=buildTableRows(tasks,{updatedAt,today,holidays:tableHolidays(today)}),rows=built.rows,width=rows[0].length,height=rows.length,sheet=getTableSheet();
   if(sheet.getMaxColumns()<width)sheet.insertColumnsAfter(sheet.getMaxColumns(),width-sheet.getMaxColumns());
   if(sheet.getMaxRows()<height)sheet.insertRowsAfter(sheet.getMaxRows(),height-sheet.getMaxRows());
+  // 이전에 만든 병합(휴가 행)을 풀고 내용·서식을 지운 뒤 다시 쓴다.
+  sheet.getRange(1,1,sheet.getMaxRows(),sheet.getMaxColumns()).breakApart();
   sheet.clear();
   sheet.getRange(1,1,height,TABLE_INFO_HEADERS.length).setNumberFormat('@');
-  sheet.getRange(1,1,height,width).setValues(rows);
+  sheet.getRange(1,1,height,width).setValues(rows).setFontFamily(TABLE_FONT);
   sheet.getRange(1,1,2,width).setFontWeight('bold').setBackground('#f1f3f4');
   built.monthTotalColumns.forEach(column=>sheet.getRange(1,column,height,1).setBackground('#eef3fd'));
   sheet.getRange(height,1,1,width).setBackground('#fff5f8');
@@ -129,7 +132,9 @@ function writeTableSheet(tasks,updatedAt){
   if(height>3)sheet.getRange(3,TABLE_INFO_HEADERS.length+1,height-3,width-TABLE_INFO_HEADERS.length).setHorizontalAlignment('right');
   // 업무 정보 열(등록일~비고) 너비는 그대로 두고, 시간·합계 열만 좁게 고정한다.
   sheet.setColumnWidths(TABLE_INFO_HEADERS.length+1,width-TABLE_INFO_HEADERS.length,TABLE_TIME_COLUMN_WIDTH);
-  sheet.setFrozenRows(2);sheet.setFrozenColumns(3);
+  // 머리글 2행과 업무 정보 열(A~F, 등록일~비고)을 고정하고, 휴가 행의 업무 정보 칸(A~F)을 병합한다.
+  sheet.setFrozenRows(2);sheet.setFrozenColumns(TABLE_INFO_HEADERS.length);
+  sheet.getRange(height,1,1,TABLE_INFO_HEADERS.length).merge();
   sheet.getRange('A1').setNote(tableSyncKey(tasks,updatedAt,today));
   return {table:TABLE_SHEET,rows:built.taskCount,dates:built.dateCount,from:TABLE_START_DATE};
 }

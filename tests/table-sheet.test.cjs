@@ -48,7 +48,7 @@ test('task rows hold daily hours, monthly day totals and period totals only from
   assert.equal(a[col(rows,'기간 합계(일)')],1.25);
   assert.equal(rows[3][4],'취소');
   const leave=rows.at(-1);
-  assert.equal(leave[2],'휴가');assert.equal(leave[col(rows,'4(수)')],'반차 · 대체휴가');
+  assert.deepEqual(leave.slice(0,6),['휴가','','','','',''],'label sits in A so it survives the A:F merge');assert.equal(leave[col(rows,'4(수)')],'반차 · 대체휴가');
   assert.ok(rows.every(row=>row.length===rows[0].length));
 });
 test('sync key changes when data is saved again or a new month starts',()=>{
@@ -59,8 +59,8 @@ test('sync key changes when data is saved again or a new month starts',()=>{
   assert.notEqual(ctx.tableSyncKey(sample,'t1','2026-12-01'),key);
 });
 function fakeSheet(note=''){
-  const sheet={calls:[],note,maxC:3,maxR:2,getMaxColumns(){return this.maxC},getMaxRows(){return this.maxR},insertColumnsAfter(_,n){this.maxC+=n},insertRowsAfter(_,n){this.maxR+=n},clear(){this.calls.push('clear')},setColumnWidths(start,count,width){this.calls.push(['widths',start,count,width])},setFrozenRows(){},setFrozenColumns(){},
-    getRange(r,c,h=1,w=1){if(typeof r==='string')return {getNote:()=>sheet.note,setNote:v=>{sheet.note=v}};if(r+h-1>this.maxR||c+w-1>this.maxC)throw new Error('out of range');const range={setHorizontalAlignment:a=>{sheet.calls.push(['align',r,c,h,w,a]);return range},setNumberFormat:()=>range,setValues:v=>{sheet.calls.push(['values',v.length,v[0].length]);return range},setFontWeight:()=>range,setBackground:()=>range};return range}};
+  const sheet={calls:[],note,maxC:3,maxR:2,getMaxColumns(){return this.maxC},getMaxRows(){return this.maxR},insertColumnsAfter(_,n){this.maxC+=n},insertRowsAfter(_,n){this.maxR+=n},clear(){this.calls.push('clear')},setColumnWidths(start,count,width){this.calls.push(['widths',start,count,width])},setFrozenRows(n){this.calls.push(['frozenRows',n])},setFrozenColumns(n){this.calls.push(['frozenColumns',n])},
+    getRange(r,c,h=1,w=1){if(typeof r==='string')return {getNote:()=>sheet.note,setNote:v=>{sheet.note=v}};if(r+h-1>this.maxR||c+w-1>this.maxC)throw new Error('out of range');const range={breakApart:()=>{sheet.calls.push(['breakApart',r,c,h,w]);return range},merge:()=>{sheet.calls.push(['merge',r,c,h,w]);return range},setFontFamily:f=>{sheet.calls.push(['font',r,c,h,w,f]);return range},setHorizontalAlignment:a=>{sheet.calls.push(['align',r,c,h,w,a]);return range},setNumberFormat:()=>range,setValues:v=>{sheet.calls.push(['values',v.length,v[0].length]);return range},setFontWeight:()=>range,setBackground:()=>range};return range}};
   return sheet;
 }
 function scriptWith(sheet,{existing=true,lockOk=true}={}){
@@ -75,10 +75,14 @@ function scriptWith(sheet,{existing=true,lockOk=true}={}){
 test('load syncs an empty or outdated tab and skips an up-to-date one',()=>{
   const sheet=fakeSheet();const ctx=scriptWith(sheet);
   assert.equal(ctx.syncTableSheetIfStale(sample,'t1'),true);
-  assert.equal(sheet.calls[0],'clear');
+  assert.equal(sheet.calls[0][0],'breakApart');assert.equal(sheet.calls[1],'clear');
   const values=sheet.calls.find(call=>call[0]==='values'),widths=sheet.calls.find(call=>call[0]==='widths');
   const aligns=sheet.calls.filter(call=>call[0]==='align');
   assert.deepEqual(aligns,[['align',1,1,values[1],values[2],'left'],['align',3,7,values[1]-3,values[2]-6,'right']],'numbers in task rows right, everything else left');
+  const [,height,width]=values;
+  assert.deepEqual(sheet.calls.find(call=>call[0]==='font'),['font',1,1,height,width,'Roboto']);
+  assert.deepEqual(sheet.calls.find(call=>call[0]==='frozenColumns'),['frozenColumns',6],'freeze through F');
+  assert.deepEqual(sheet.calls.find(call=>call[0]==='merge'),['merge',height,1,1,6],'merge A:F on the leave row');
   assert.deepEqual(widths,['widths',7,values[2]-6,40],'only time/total columns after 비고 are narrowed');assert.equal(sheet.note,ctx.tableSyncKey(sample,'t1','2026-11-04'));
   sheet.calls=[];
   assert.equal(ctx.syncTableSheetIfStale(sample,'t1'),false);assert.equal(sheet.calls.length,0);
