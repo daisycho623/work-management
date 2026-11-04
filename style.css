@@ -602,17 +602,23 @@ tfoot td {
 .form-box {
   padding: 20px 22px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 20px;
   min-height: 0;
   overflow-y: auto;
 }
 
 .form-field {
+  grid-column: span 3;
+  min-width: 0;
   display: grid;
   gap: 6px;
   font-size: 12px;
   font-weight: 700;
+}
+
+.form-field.third {
+  grid-column: span 2;
 }
 
 .form-field.full {
@@ -911,6 +917,8 @@ tfoot td {
     grid-template-columns: 1fr;
   }
 
+  .form-field,
+  .form-field.third,
   .form-field.full {
     grid-column: auto;
   }
