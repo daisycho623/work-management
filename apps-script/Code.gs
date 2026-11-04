@@ -1,5 +1,6 @@
 const DATA_SHEET = '웹앱_업무데이터';
 const BACKUP_SHEET = '웹앱_백업데이터';
+const TABLE_SHEET = '웹앱_업무대장';
 const BACKUP_TIMEZONE = 'Asia/Seoul';
 const HOLIDAY_API_URL = 'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo';
 function doGet(){return jsonResponse(loadPayload())}
@@ -48,9 +49,42 @@ function getHolidays(year){
   throw new Error('공휴일 조회 페이지 한도를 초과했습니다.');
 }
 function formatKoreanTimestamp(date){return Utilities.formatDate(date||new Date(),BACKUP_TIMEZONE,"yyyy-MM-dd'T'HH:mm:ssXXX")}
-function savePayload(tasks){if(!Array.isArray(tasks))throw new Error('업무 데이터 형식이 올바르지 않습니다.');const json=JSON.stringify(tasks),lock=LockService.getScriptLock();if(!lock.tryLock(30000))throw new Error('다른 저장 또는 백업 작업이 진행 중입니다. 잠시 후 저장을 다시 시도해 주세요.');try{const s=getDataSheet(),updatedAt=formatKoreanTimestamp();s.getRange('A2:B2').setValues([[json,updatedAt]]);SpreadsheetApp.flush();return {ok:true,updatedAt}}finally{lock.releaseLock()}}
+function savePayload(tasks){if(!Array.isArray(tasks))throw new Error('업무 데이터 형식이 올바르지 않습니다.');const json=JSON.stringify(tasks),lock=LockService.getScriptLock();if(!lock.tryLock(30000))throw new Error('다른 저장 또는 백업 작업이 진행 중입니다. 잠시 후 저장을 다시 시도해 주세요.');try{const s=getDataSheet(),updatedAt=formatKoreanTimestamp();s.getRange('A2:B2').setValues([[json,updatedAt]]);SpreadsheetApp.flush();const result={ok:true,updatedAt};try{writeTableSheet(tasks,updatedAt);SpreadsheetApp.flush()}catch(error){result.tableError=error.message}return result}finally{lock.releaseLock()}}
 function getDataSheet(){const book=SpreadsheetApp.getActiveSpreadsheet();let sheet=book.getSheetByName(DATA_SHEET);if(!sheet){sheet=book.insertSheet(DATA_SHEET);sheet.getRange('A1:B1').setValues([['업무 데이터(JSON)','최종 저장 시각']]);sheet.hideSheet()}return sheet}
 function getBackupSheet(){const book=SpreadsheetApp.getActiveSpreadsheet();let sheet=book.getSheetByName(BACKUP_SHEET);if(!sheet){sheet=book.insertSheet(BACKUP_SHEET);sheet.getRange('A1:D1').setValues([['백업 월','백업 시각','원본 최종 저장 시각','업무 데이터(JSON)']]);sheet.setFrozenRows(1)}return sheet}
 function backupMonthlyData(){const lock=LockService.getScriptLock();lock.waitLock(10000);try{const now=new Date(),backupMonth=Utilities.formatDate(now,BACKUP_TIMEZONE,'yyyy-MM'),backupAt=formatKoreanTimestamp(now),source=getDataSheet(),values=source.getRange('A2:B2').getValues()[0],json=values[0]||'[]',sourceUpdatedAt=values[1]||'',backup=getBackupSheet(),lastRow=backup.getLastRow(),months=lastRow>1?backup.getRange(2,1,lastRow-1,1).getDisplayValues().flat():[],existingIndex=months.indexOf(backupMonth),row=existingIndex>=0?existingIndex+2:lastRow+1;backup.getRange(row,1,1,4).setValues([[backupMonth,backupAt,sourceUpdatedAt,json]]);SpreadsheetApp.flush();return {ok:true,backupMonth,row}}finally{lock.releaseLock()}}
 function setupMonthlyBackupTrigger(){getBackupSheet();ScriptApp.getProjectTriggers().filter(trigger=>trigger.getHandlerFunction()==='backupMonthlyData').forEach(trigger=>ScriptApp.deleteTrigger(trigger));ScriptApp.newTrigger('backupMonthlyData').timeBased().onMonthDay(1).atHour(1).inTimezone(BACKUP_TIMEZONE).create();return '매월 1일 01시대 월간 백업 트리거가 설정되었습니다.'}
+// 화면의 업무 표(table-scroll)와 같은 형태로 사람이 읽을 수 있는 백업 탭을 만든다.
+// 저장할 때마다 전체를 다시 쓰며, 이 탭 기록이 실패해도 JSON 저장은 유지된다.
+const TABLE_INFO_HEADERS=['등록일','RMS, Jira','업무명','반영일','진행현황','구분','비고'];
+const TABLE_LEAVE_LABELS={annual:'연차',half:'반차',quarter:'반반차'};
+function tableLeaveLabel(value){let type='annual',substitute=false;if(value&&typeof value==='object'){type=TABLE_LEAVE_LABELS[value.type]?value.type:'annual';substitute=Boolean(value.substitute)}else if(value==='substitute'){substitute=true}else if(TABLE_LEAVE_LABELS[value]){type=value}return TABLE_LEAVE_LABELS[type]+(substitute?' · 대체휴가':'')}
+function buildTableRows(tasks,updatedAt){
+  const isDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(value),weekdays='일월화수목금토';
+  const calendar=tasks.find(task=>task&&(task.id==='__leave_calendar__'||task._type==='leave-calendar'))||{},leaves=calendar.leaves||{};
+  const list=tasks.filter(task=>task&&task!==calendar&&task.id!=='__leave_calendar__'&&task._type!=='leave-calendar');
+  const dateSet=new Set(Object.keys(leaves).filter(isDate));
+  list.forEach(task=>Object.keys(task.hours||{}).forEach(date=>{if(isDate(date)&&Number(task.hours[date]))dateSet.add(date)}));
+  const dates=[...dateSet].sort();
+  const monthRow=[...TABLE_INFO_HEADERS.map((_,index)=>index===0?'최종 저장 '+(updatedAt||''):''),...dates.map((date,index)=>index===0||dates[index-1].slice(0,7)!==date.slice(0,7)?date.slice(0,4)+'년 '+Number(date.slice(5,7))+'월':''),'합계(시간)','합계(일)'];
+  const dayRow=[...TABLE_INFO_HEADERS,...dates.map(date=>Number(date.slice(8))+'('+weekdays[new Date(date+'T00:00:00Z').getUTCDay()]+')'),'',''];
+  const rows=list.map(task=>{let total=0;const cells=dates.map(date=>{const value=Number((task.hours||{})[date])||0;total+=value;return value||''});const dates0=Array.isArray(task.dates)?task.dates:(task.date?[task.date]:[]),releaseDate=dates0.filter(Boolean).sort()[0]||'';return [task.createdDate||'',task.rms||'',task.task||'',releaseDate,task.status==='보류'?'취소':(task.status||''),task.category||'',task.note||'',...cells,total||'',total?Math.round(total/8*1000)/1000:'']});
+  const leaveRow=['','','휴가','','','','',...dates.map(date=>leaves[date]?tableLeaveLabel(leaves[date]):''),'',''];
+  return [monthRow,dayRow,...rows,leaveRow];
+}
+function getTableSheet(){const book=SpreadsheetApp.getActiveSpreadsheet();return book.getSheetByName(TABLE_SHEET)||book.insertSheet(TABLE_SHEET)}
+function writeTableSheet(tasks,updatedAt){
+  const rows=buildTableRows(tasks,updatedAt),width=rows[0].length,height=rows.length,sheet=getTableSheet();
+  if(sheet.getMaxColumns()<width)sheet.insertColumnsAfter(sheet.getMaxColumns(),width-sheet.getMaxColumns());
+  if(sheet.getMaxRows()<height)sheet.insertRowsAfter(sheet.getMaxRows(),height-sheet.getMaxRows());
+  sheet.clear();
+  sheet.getRange(1,1,height,TABLE_INFO_HEADERS.length).setNumberFormat('@');
+  sheet.getRange(1,1,height,width).setValues(rows);
+  sheet.getRange(1,1,2,width).setFontWeight('bold').setBackground('#f1f3f4');
+  sheet.getRange(height,1,1,width).setBackground('#fff5f8');
+  sheet.setFrozenRows(2);sheet.setFrozenColumns(3);
+}
+// Apps Script 편집기에서 한 번 실행하면 현재 저장된 데이터로 표 탭을 바로 만든다.
+function rebuildTableSheet(){const values=getDataSheet().getRange('A2:B2').getValues()[0],tasks=values[0]?JSON.parse(values[0]):[];writeTableSheet(tasks,values[1]||formatKoreanTimestamp());return TABLE_SHEET+' 탭을 다시 만들었습니다.'}
+
 function jsonResponse(payload){return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(ContentService.MimeType.JSON)}
